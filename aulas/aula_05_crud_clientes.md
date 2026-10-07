@@ -48,9 +48,9 @@ lembrando que como você sempre vai perder esse arquivo quando sair no laborató
 Crie um arquivo chamado `.env` dentro da pasta `backend/`:
 
 ```
-DB_HOST=localhost
+=localhost
 DB_USER=root
-DB_PASSWORD=
+DB_PASSWORD=DB_HOST
 DB_NAME=estudio_tatuagem
 ```
 
