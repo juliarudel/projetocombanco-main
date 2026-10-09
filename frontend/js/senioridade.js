@@ -45,17 +45,18 @@ formSenioridade.addEventListener('submit', async (e) => {
 
   if (idSenioridade) {
     await fetch(`${API}/senioridade/${idSenioridade}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(senioridade)
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(senioridade)
     })
-  } else {
+} else {
     await fetch(`${API}/senioridade`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(senioridade)
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(senioridade)
     })
-  }
+}
+
 
   limparFormulario()
   listarSenioridades()
@@ -78,4 +79,3 @@ async function deletarSenioridade(id) {
   await fetch(`${API}/senioridade/${id}`, { method: 'DELETE' })
   listarSenioridades()
 }
-```
