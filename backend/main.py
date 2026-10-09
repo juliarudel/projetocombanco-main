@@ -1,18 +1,19 @@
+
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware  # importa o middleware de CORS
-from rotas import clientes
+from fastapi.middleware.cors import CORSMiddleware
+from rotas import clientes, senioridade   # ← adiciona senioridade aqui
 
 app = FastAPI()
 
-# Configura quais origens têm permissão de chamar a API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],      # "*" = qualquer origem (usado em desenvolvimento)
-    allow_methods=["*"],      # permite todos os métodos (GET, POST, PUT, DELETE)
-    allow_headers=["*"],      # permite todos os cabeçalhos
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(clientes.router)
+app.include_router(senioridade.router)   # ← registra a nova rota
 
 
 @app.get("/")
