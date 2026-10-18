@@ -212,22 +212,30 @@ def buscar_agendamento(id: int):
 
 ```python
 # PUT /agendamentos/{id} — atualiza um agendamento existente
-@router.put("/agendamentos/{id}")
-def atualizar_agendamento(id: int, agendamento: Agendamento):
+@router.get("/agendamentos/{id}")
+def buscar_agendamento(id: int):
     conn = conectar()
-    cursor = conn.cursor()
-    cursor.execute(
-        """UPDATE agendamento
-           SET idcliente=%s, idtatuador=%s, dataagendamento=%s, horaagendamento=%s,
-               descricaotatuagem=%s, valortatuagem=%s, status=%s
-           WHERE idagendamento=%s""",
-        (agendamento.idcliente, agendamento.idtatuador, agendamento.dataagendamento,
-         agendamento.horaagendamento, agendamento.descricaotatuagem,
-         agendamento.valortatuagem, agendamento.status, id)
-    )
-    conn.commit()
-    conn.close()
-    return {"mensagem": "Agendamento atualizado com sucesso"}
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        cursor.execute(
+            "SELECT * FROM agendamento WHERE idagendamento = %s",
+            (id,)
+        )
+
+        agendamento = cursor.fetchone()
+
+        if agendamento is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Agendamento não encontrado"
+            )
+
+        return agendamento
+
+    finally:
+        cursor.close()
+        conn.close()
 ```
 
 **Teste:** no `/docs`, use `PUT /agendamentos/{id}` para mudar o `status` de um agendamento para `"confirmado"`. Depois busque o mesmo ID com `GET /agendamentos/{id}` para confirmar a alteração.
