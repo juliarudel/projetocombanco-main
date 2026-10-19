@@ -3,31 +3,31 @@ from pydantic import BaseModel
 from typing import Optional
 from database import conectar
 
+
 router = APIRouter()
 
 
-# Modelo de dados - define os campos que o cliente deve ter
 class Cliente(BaseModel):
-    nome: str                         # obrigatório
-    cpf: str                          # obrigatório
-    telefone: Optional[str] = None    # opcional
-    datacadastro: Optional[str] = None # opcional
-    cidade: Optional[str] = None      # opcional
-    uf: Optional[str] = None          # opcional
+    nome: str                         
+    cpf: str                          
+    telefone: Optional[str] = None    
+    datacadastro: Optional[str] = None 
+    cidade: Optional[str] = None      
+    uf: Optional[str] = None          
 
-# GET /clientes — lista todos os clientes
-@router.get("/clientes")
+# GET /clientes
+@router.get("")
 def listar_clientes():
-    conn = conectar()                        # abre conexão
-    cursor = conn.cursor(dictionary=True)    # retorna dicionários em vez de tuplas
-    cursor.execute("SELECT * FROM cliente")  # executa o SELECT
-    clientes = cursor.fetchall()             # pega todos os resultados
-    conn.close()                             # fecha a conexão
-    return clientes                          # retorna a lista em JSON
+    conn = conectar()                        
+    cursor = conn.cursor(dictionary=True)    
+    cursor.execute("SELECT * FROM cliente")  
+    clientes = cursor.fetchall()             
+    conn.close()                             
+    return clientes                          
 
-# POST /clientes - cadastra um novo cliente
-@router.post("/clientes")
-def criar_cliente(cliente: Cliente):      # recebe os dados no corpo da requisição
+# POST /clientes
+@router.post("")
+def criar_cliente(cliente: Cliente):      
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute(
@@ -36,12 +36,12 @@ def criar_cliente(cliente: Cliente):      # recebe os dados no corpo da requisi�
         (cliente.nome, cliente.cpf, cliente.telefone, 
          cliente.datacadastro, cliente.cidade, cliente.uf)
     )
-    conn.commit()  # confirma a gravação no banco
-    conn.close()   # não se esqueça de fechar a conexão!
+    conn.commit()  
+    conn.close()   
     return {"mensagem": "Cliente cadastrado com sucesso!"}
 
-    # PUT /clientes/{id} - atualiza um cliente existente
-@router.put("/clientes/{id}")
+# PUT /clientes/{id}
+@router.put("/{id}")
 def atualizar_cliente(id: int, cliente: Cliente):
     conn = conectar()
     cursor = conn.cursor()
@@ -56,8 +56,8 @@ def atualizar_cliente(id: int, cliente: Cliente):
     conn.close()
     return {"mensagem": "Cliente atualizado com sucesso"}
 
-# DELETE /clientes/{id} - deleta um cliente
-@router.delete("/clientes/{id}")
+# DELETE /clientes/{id}
+@router.delete("/{id}")
 def deletar_cliente(id: int):
     conn = conectar()
     cursor = conn.cursor()

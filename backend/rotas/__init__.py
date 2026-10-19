@@ -4,3 +4,5 @@ from typing import Optional         # permite campos opcionais
 from database import conectar       # nossa função de conexão
 
 router = APIRouter()                # cria o grupo de rotas
+
+from . import clientes, senioridade, tatuadores, agendamentos, estilos

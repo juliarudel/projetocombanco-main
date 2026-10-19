@@ -6,7 +6,7 @@ Se a máquina foi reiniciada desde a última aula, repita os passos da Aula 3 an
 
 1. **Recrie e ative o ambiente virtual**, dentro da pasta `backend`:
    ```powershell
-   cd backend
+  c
    python -m venv venv
    .\venv\Scripts\Activate.ps1
    ```
