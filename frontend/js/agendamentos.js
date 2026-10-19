@@ -1,4 +1,3 @@
-
 const API = 'http://127.0.0.1:8000';
 
 const formAgendamento = document.getElementById('form-agendamento');
@@ -85,54 +84,35 @@ function limparFormulario() {
   blocoStatus.style.display = 'none';
 }
 
+// ─── PARTE 7: LISTAR AGENDAMENTOS COM EXIBIÇÃO DE MINIATURA ATUALIZADA ───
 async function listarAgendamentos() {
-  const resposta = await verificarResposta(
-    await fetch(`${API}/agendamentos`)
-  );
+  const resposta = await fetch(`${API}/agendamentos`);
+  const agendamentos = await resposta.json();
 
-  agendamentosCarregados = await resposta.json();
-  corpoTabela.innerHTML = '';
+  const corpo = document.getElementById('corpo-tabela');
+  corpo.innerHTML = '';
 
-  agendamentosCarregados.forEach(a => {
-    const linha = document.createElement('tr');
+  agendamentos.forEach(a => {
+    // encodeURIComponent trata espaços em branco e caracteres especiais no nome do arquivo
+    const imagemHtml = a.desenhoaprovado
+      ? `<img src="${API}/uploads/${encodeURIComponent(a.desenhoaprovado)}" style="max-width: 60px; max-height: 60px; object-fit: cover; border-radius: 4px;" alt="Desenho">`
+      : '-';
 
-    const valores = [
-      a.idagendamento,
-      a.cliente,
-      a.tatuador,
-      String(a.dataagendamento).slice(0, 10),
-      formatarHora(a.horaagendamento),
-      a.valortatuagem ?? '-',
-      a.status || 'pendente'
-    ];
-
-    valores.forEach(valor => {
-      const celula = document.createElement('td');
-      celula.textContent = valor ?? '';
-      linha.appendChild(celula);
-    });
-
-    const celulaAcoes = document.createElement('td');
-
-    const botaoEditar = document.createElement('button');
-    botaoEditar.type = 'button';
-    botaoEditar.className = 'btn btn-sm btn-warning me-2';
-    botaoEditar.textContent = 'Editar';
-    botaoEditar.addEventListener('click', () => {
-      preencherFormularioEdicao(a);
-    });
-
-    const botaoExcluir = document.createElement('button');
-    botaoExcluir.type = 'button';
-    botaoExcluir.className = 'btn btn-sm btn-danger';
-    botaoExcluir.textContent = 'Excluir';
-    botaoExcluir.addEventListener('click', () => {
-      deletarAgendamento(a.idagendamento);
-    });
-
-    celulaAcoes.append(botaoEditar, botaoExcluir);
-    linha.appendChild(celulaAcoes);
-    corpoTabela.appendChild(linha);
+    corpo.innerHTML += `
+      <tr>
+        <td>${a.idagendamento}</td>
+        <td>${a.cliente}</td>
+        <td>${a.tatuador}</td>
+        <td>${String(a.dataagendamento).slice(0, 10)}</td>
+        <td>${formatarHora(a.horaagendamento)}</td>
+        <td>${a.valortatuagem ?? '-'}</td>
+        <td>${a.status || 'pendente'}</td>
+        <td>${imagemHtml}</td>
+        <td>
+          <button class="btn btn-sm btn-warning me-2" onclick='preencherFormularioEdicao(${JSON.stringify(a)})'>Editar</button>
+          <button class="btn btn-sm btn-danger" onclick="deletarAgendamento(${a.idagendamento})">Excluir</button>
+        </td>
+      </tr>`;
   });
 }
 
@@ -170,93 +150,49 @@ function preencherFormularioEdicao(agendamento) {
 formAgendamento.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const idAgendamento = formAgendamento.dataset.idAgendamento;
-
   const agendamento = {
     idcliente: Number(document.getElementById('idcliente').value),
     idtatuador: Number(document.getElementById('idtatuador').value),
     dataagendamento: document.getElementById('dataagendamento').value,
     horaagendamento: document.getElementById('horaagendamento').value,
-    descricaotatuagem:
-      document.getElementById('descricaotatuagem').value || null,
-    valortatuagem:
-      document.getElementById('valortatuagem').value !== ''
-        ? Number(document.getElementById('valortatuagem').value)
-        : null
+    descricaotatuagem: document.getElementById('descricaotatuagem').value || null,
+    valortatuagem: document.getElementById('valortatuagem').value
+      ? Number(document.getElementById('valortatuagem').value)
+      : null,
+    status: document.getElementById('status').value
   };
 
-  // Só envia o status quando estiver editando.
-  if (idAgendamento !== undefined) {
-    agendamento.status = document.getElementById('status').value;
-  }
+  const idAgendamento = formAgendamento.dataset.idAgendamento;
+  let idParaUpload = idAgendamento;
 
-  try {
-    botaoSubmit.disabled = true;
-
-    const resposta = await fetch(
-      idAgendamento !== undefined
-        ? `${API}/agendamentos/${idAgendamento}`
-        : `${API}/agendamentos`,
-      {
-        method: idAgendamento !== undefined ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(agendamento)
-      }
-    );
-
-    await verificarResposta(resposta);
-
-    alert(
-      idAgendamento !== undefined
-        ? 'Agendamento atualizado com sucesso!'
-        : 'Agendamento cadastrado com sucesso!'
-    );
-
-    limparFormulario();
-    await listarAgendamentos();
-
-  } catch (erro) {
-    console.error('Erro ao salvar agendamento:', erro);
-    alert(`Não foi possível salvar: ${erro.message}`);
-  } finally {
-    botaoSubmit.disabled = false;
-  }
-});
-
-async function deletarAgendamento(id) {
-  if (!confirm('Tem certeza que deseja excluir este agendamento?')) return;
-
-  try {
-    const resposta = await fetch(`${API}/agendamentos/${id}`, {
-      method: 'DELETE'
+  if (idAgendamento) {
+    await fetch(`${API}/agendamentos/${idAgendamento}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(agendamento)
     });
-
-    await verificarResposta(resposta);
-
-    alert('Agendamento excluído com sucesso!');
-    await listarAgendamentos();
-
-  } catch (erro) {
-    console.error('Erro ao excluir:', erro);
-    alert(`Não foi possível excluir: ${erro.message}`);
+  } else {
+    const resposta = await fetch(`${API}/agendamentos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(agendamento)
+    });
+    const dados = await resposta.json();
+    idParaUpload = dados.idagendamento;
   }
-}
 
-// Inicializa a página.
-async function inicializar() {
-  try {
-    await Promise.all([
-      carregarClientes(),
-      carregarTatuadores()
-    ]);
+  // Certifique-se de que a leitura `.files[0]` está devidamente mapeada aqui
+  const arquivo = document.getElementById('desenho').files[0];
+  if (arquivo && idParaUpload) {
+    const formData = new FormData();
+    formData.append('arquivo', arquivo);
 
-    await listarAgendamentos();
-  } catch (erro) {
-    console.error('Erro ao carregar a página:', erro);
-    alert(`Erro ao carregar dados: ${erro.message}`);
+    await fetch(`${API}/agendamentos/${idParaUpload}/desenho`, {
+      method: 'POST',
+      body: formData
+    });
   }
-}
 
-inicializar();
+  limparFormulario();
+  listarAgendamentos();
+});
