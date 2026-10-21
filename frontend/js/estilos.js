@@ -1,4 +1,5 @@
 const API = 'http://127.0.0.1:8000'
+protegerPagina()
 const formEstilo = document.getElementById('form-estilo')
 const botaoSubmit = document.getElementById('btn-submit-estilo')
 
@@ -11,7 +12,8 @@ function limparFormulario() {
 }
 
 async function listarEstilos() {
-  const resposta = await fetch(`${API}/estilos`)
+  // Alterado para fetchAutenticado
+  const resposta = await fetchAutenticado(`${API}/estilos`)
   const estilos = await resposta.json()
 
   const corpo = document.getElementById('corpo-tabela')
@@ -39,13 +41,15 @@ formEstilo.addEventListener('submit', async (e) => {
   const idEstilo = formEstilo.dataset.idEstilo
 
   if (idEstilo) {
-    await fetch(`${API}/estilos/${idEstilo}`, {
+    // Alterado para fetchAutenticado
+    await fetchAutenticado(`${API}/estilos/${idEstilo}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(estilo)
     })
   } else {
-    await fetch(`${API}/estilos`, {
+    // Alterado para fetchAutenticado
+    await fetchAutenticado(`${API}/estilos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(estilo)
@@ -66,6 +70,7 @@ function preencherFormularioEdicao(estilo) {
 
 async function deletarEstilo(id) {
   if (!confirm('Tem certeza que deseja excluir este estilo?')) return
-  await fetch(`${API}/estilos/${id}`, { method: 'DELETE' })
+  // Alterado para fetchAutenticado
+  await fetchAutenticado(`${API}/estilos/${id}`, { method: 'DELETE' })
   listarEstilos()
 }

@@ -1,4 +1,5 @@
 const API = 'http://127.0.0.1:8000'  // endereço da nossa API
+protegerPagina()
 const formCliente = document.getElementById('form-cliente')
 const botaoSubmit = document.getElementById('btn-submit-cliente')
 

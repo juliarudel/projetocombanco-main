@@ -3,32 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title>Senioridade — Estúdio de Tatuagem</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://jsdelivr.net" rel="stylesheet">
 </head>
 <body class="container py-4">
 
-  nav class="navbar navbar-dark bg-dark mb-4">
-  <div class="container">
-    <span class="navbar-brand">Estúdio de Tatuagem</span>
-    <div>
-      <a href="clientes.html" class="text-light me-3">Clientes</a>
-      <a href="senioridade.html" class="text-light me-3">Senioridade</a>
-      <a href="tatuadores.html" class="text-light me-3">Tatuadores</a>
-      <a href="agendamentos.html" class="text-light">Agendamentos</a>
-    </div>
-  </div>
-</nav>
-  
+  <!-- Navbar idêntica ao molde do roteiro -->
   <nav class="navbar navbar-dark bg-dark mb-4">
     <div class="container">
       <span class="navbar-brand">Estúdio de Tatuagem</span>
       <div>
-        <a href="clientes.html" class="text-light me-3">Clientes</a>
-        <a href="senioridade.html" class="text-light me-3">Senioridade</a>
-        <a href="tatuadores.html" class="text-light">Tatuadores</a>
+        <a href="clientes.html" class="text-light me-3 text-decoration-none">Clientes</a>
+        <a href="senioridade.html" class="text-light me-3 text-decoration-none fw-bold">Senioridade</a>
+        <a href="estilos.html" class="text-light me-3 text-decoration-none">Estilos</a>
+        <a href="tatuadores.html" class="text-light me-3 text-decoration-none">Tatuadores</a>
+        <a href="agendamentos.html" class="text-light me-3 text-decoration-none">Agendamentos</a>
+        <button onclick="sair()" class="btn btn-outline-light btn-sm">Sair</button>
       </div>
     </div>
   </nav>
+
   <h1>Senioridade</h1>
 
   <!-- Formulário para cadastrar nova senioridade -->
@@ -55,6 +48,8 @@
     </tbody>
   </table>
 
+  <!-- Ordem correta de scripts -->
+  <script src="js/auth.js"></script>
   <script src="js/senioridade.js"></script>
 
 </body>
