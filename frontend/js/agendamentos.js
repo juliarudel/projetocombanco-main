@@ -1,5 +1,5 @@
 const API = 'http://127.0.0.1:8000';
-
+protegerPagina()
 const formAgendamento = document.getElementById('form-agendamento');
 const botaoSubmit = document.getElementById('btn-submit-agendamento');
 const blocoStatus = document.getElementById('bloco-status');
@@ -38,8 +38,9 @@ async function verificarResposta(resposta) {
 }
 
 async function carregarClientes() {
+  // Alterado para fetchAutenticado
   const resposta = await verificarResposta(
-    await fetch(`${API}/clientes`)
+    await fetchAutenticado(`${API}/clientes`)
   );
 
   const clientes = await resposta.json();
@@ -56,8 +57,9 @@ async function carregarClientes() {
 }
 
 async function carregarTatuadores() {
+  // Alterado para fetchAutenticado
   const resposta = await verificarResposta(
-    await fetch(`${API}/tatuadores`)
+    await fetchAutenticado(`${API}/tatuadores`)
   );
 
   const tatuadores = await resposta.json();
@@ -86,14 +88,14 @@ function limparFormulario() {
 
 // ─── PARTE 7: LISTAR AGENDAMENTOS COM EXIBIÇÃO DE MINIATURA ATUALIZADA ───
 async function listarAgendamentos() {
-  const resposta = await fetch(`${API}/agendamentos`);
+  // Alterado para fetchAutenticado
+  const resposta = await fetchAutenticado(`${API}/agendamentos`);
   const agendamentos = await resposta.json();
 
   const corpo = document.getElementById('corpo-tabela');
   corpo.innerHTML = '';
 
   agendamentos.forEach(a => {
-    // encodeURIComponent trata espaços em branco e caracteres especiais no nome do arquivo
     const imagemHtml = a.desenhoaprovado
       ? `<img src="${API}/uploads/${encodeURIComponent(a.desenhoaprovado)}" style="max-width: 60px; max-height: 60px; object-fit: cover; border-radius: 4px;" alt="Desenho">`
       : '-';
@@ -166,13 +168,15 @@ formAgendamento.addEventListener('submit', async (e) => {
   let idParaUpload = idAgendamento;
 
   if (idAgendamento) {
-    await fetch(`${API}/agendamentos/${idAgendamento}`, {
+    // Alterado para fetchAutenticado
+    await fetchAutenticado(`${API}/agendamentos/${idAgendamento}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(agendamento)
     });
   } else {
-    const resposta = await fetch(`${API}/agendamentos`, {
+    // Alterado para fetchAutenticado
+    const resposta = await fetchAutenticado(`${API}/agendamentos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(agendamento)
@@ -181,13 +185,16 @@ formAgendamento.addEventListener('submit', async (e) => {
     idParaUpload = dados.idagendamento;
   }
 
-  // Certifique-se de que a leitura `.files[0]` está devidamente mapeada aqui
-  const arquivo = document.getElementById('desenho').files[0];
+  // Bloco de Upload do arquivo de desenho
+  const arquivoInput = document.getElementById('desenho');
+  const arquivo = arquivoInput && arquivoInput.files ? arquivoInput.files[0] : null;
+  
   if (arquivo && idParaUpload) {
     const formData = new FormData();
     formData.append('arquivo', arquivo);
 
-    await fetch(`${API}/agendamentos/${idParaUpload}/desenho`, {
+    // Alterado para fetchAutenticado
+    await fetchAutenticado(`${API}/agendamentos/${idParaUpload}/desenho`, {
       method: 'POST',
       body: formData
     });
@@ -197,7 +204,29 @@ formAgendamento.addEventListener('submit', async (e) => {
   listarAgendamentos();
 });
 
-// Executa automaticamente as funções assim que a página abre (Corrigido!)
+// ─── FUNÇÃO DELETAR AGENDAMENTO (Adicionada e Corrigida!) ───
+async function deletarAgendamento(id) {
+  if (confirm('Tem certeza que deseja excluir este agendamento?')) {
+    try {
+      // Alterado para fetchAutenticado
+      const resposta = await fetchAutenticado(`${API}/agendamentos/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (resposta.ok) {
+        alert('Agendamento excluído com sucesso!');
+        listarAgendamentos();
+      } else {
+        alert('Erro ao tentar excluir o agendamento.');
+      }
+    } catch (erro) {
+      console.error('Erro na requisição:', erro);
+      alert('Não foi possível conectar ao servidor.');
+    }
+  }
+}
+
+// Executa automaticamente as funções assim que a página abre
 document.addEventListener('DOMContentLoaded', () => {
   carregarClientes();
   carregarTatuadores();

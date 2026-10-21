@@ -4,7 +4,6 @@ from database import conectar
 
 router = APIRouter()               
 
-
 class Senioridade(BaseModel):
     nome: str    
 
