@@ -43,7 +43,7 @@ def criar_cliente(cliente: Cliente):
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute(
-        """INSERT INTO cliente (nome, cpf, telefone, datacadastro, city, uf)
+        """INSERT INTO cliente (nome, cpf, telefone, datacadastro, cidade, uf)
         VALUES (%s, %s, %s, %s, %s, %s)""",
         (cliente.nome, cliente.cpf, cliente.telefone, 
          cliente.datacadastro, cliente.cidade, cliente.uf)

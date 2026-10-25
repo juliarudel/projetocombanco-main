@@ -22,8 +22,7 @@ formLogin.addEventListener('submit', async (e) => {
   if (resposta.ok) {
     localStorage.setItem('token', resultado.access_token)   // guarda o token na "gaveta"
     
-    // Altere para 'index.html' ou 'agendamento.html' se você não tiver uma página chamada dashboard.html
-    window.location.href = 'index.html' 
+    window.location.href = 'dashboard.html'
   } else {
     // Alinhado com a mensagem padrão de erro retornada pela sua API
     alert(resultado.detail || 'E-mail ou senha incorretos.')

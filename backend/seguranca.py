@@ -1,14 +1,17 @@
 from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt
+import os
+
+SECRET_KEY = os.getenv("SECRET_KEY", "sua_chave_secreta_aqui")
+ALGORITHM = "HS256"
 
 security_scheme = HTTPBearer()
 
 def verificar_token(credentials: HTTPAuthorizationCredentials = Depends(security_scheme)):
     token = credentials.credentials
     try:
-        # options={'verify_signature': False} impede o erro de 'Token inválido' por chaves diferentes
-        payload = jwt.decode(token, options={"verify_signature": False})
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload  
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expirou")

@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from rotas import clientes, senioridade, tatuadores, agendamentos, estilos, usuarios
 # AJUSTADO: Importando apenas o verificar_token padrão do arquivo de segurança
-from seguranca import verificar_token
+from seguranca import verificar_token, verificar_admin
 from database import conectar
 import bcrypt
 import jwt
@@ -24,7 +24,7 @@ os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")   
 
 # Configurações do Token JWT
-SECRET_KEY = "sua_chave_secreta_aqui"  
+SECRET_KEY = os.getenv("SECRET_KEY", "sua_chave_secreta_aqui")
 ALGORITHM = "HS256"
 
 # Modelo para receber o login
@@ -92,7 +92,7 @@ def login_usuario(dados: LoginDados):
 
 # ─── Registro das rotas do sistema usando a nova dependência blindada ───
 # DEIXE ESSA LINHA LIMPA (SEM DEPENDENCIES), APENAS COM O PREFIXO:
-app.include_router(usuarios.router, prefix="/usuarios", tags=["Usuários"])
+app.include_router(usuarios.router, prefix="/usuarios", tags=["Usuários"], dependencies=[Depends(verificar_admin)])
 
 app.include_router(clientes.router, prefix="/clientes", tags=["Clientes"], dependencies=[Depends(verificar_token)])
 app.include_router(senioridade.router, prefix="/senioridade", tags=["Senioridade"], dependencies=[Depends(verificar_token)])

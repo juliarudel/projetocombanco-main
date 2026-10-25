@@ -4,11 +4,12 @@ from typing import Optional
 from database import conectar
 import bcrypt      # biblioteca que gera e confere o hash da senha
 import jwt         # biblioteca que gera o token de acesso (JWT)
+import os
 
 router = APIRouter()
 
 # Configurações do Token JWT (idênticas às usadas nos testes de validação)
-SECRET_KEY = "sua_chave_secreta_aqui"  
+SECRET_KEY = os.getenv("SECRET_KEY", "sua_chave_secreta_aqui")
 ALGORITHM = "HS256"
 
 # Modelo de dados para Cadastro de Usuário
