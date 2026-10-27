@@ -2,93 +2,297 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agendamentos — Estúdio de Tatuagem</title>
-  <link href="https://jsdelivr.net" rel="stylesheet">
-</head>
-<body class="container py-4">
 
-  <!-- Navbar idêntica ao molde do roteiro -->
-  <nav class="navbar navbar-dark bg-dark mb-4">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #181818;
+      color: #f5f5f5;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: #101010 !important;
+      border-bottom: 2px solid #c2185b;
+      padding: 15px;
+    }
+
+    .navbar-brand {
+      color: #ff4081 !important;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .nav-link {
+      color: #f5f5f5 !important;
+      transition: 0.2s;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: #ff4081 !important;
+    }
+
+    .btn-sair {
+      border: 1px solid #ff4081;
+      color: #ff4081;
+    }
+
+    .btn-sair:hover {
+      background-color: #c2185b;
+      color: white;
+    }
+
+    h1 {
+      color: #ff4081;
+      font-weight: bold;
+      margin: 30px 0;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .formulario {
+      background-color: #242424;
+      padding: 20px;
+      border: 1px solid #383838;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+
+    .form-control,
+    .form-select {
+      background-color: #303030;
+      color: #fff;
+      border: 1px solid #555;
+    }
+
+    .form-control::placeholder {
+      color: #bdbdbd;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      background-color: #303030;
+      color: #fff;
+      border-color: #ff4081;
+      box-shadow: 0 0 0 0.2rem rgba(255, 64, 129, 0.2);
+    }
+
+    .form-select option {
+      background-color: #303030;
+      color: #fff;
+    }
+
+    input[type="date"],
+    input[type="time"],
+    input[type="file"] {
+      color-scheme: dark;
+    }
+
+    .btn-cadastrar {
+      background-color: #c2185b;
+      color: #fff;
+      border: none;
+      font-weight: bold;
+    }
+
+    .btn-cadastrar:hover {
+      background-color: #ff4081;
+      color: #181818;
+    }
+
+    .tabela-container {
+      background-color: #242424;
+      padding: 15px;
+      border: 1px solid #383838;
+      border-radius: 10px;
+    }
+
+    .table {
+      color: #f5f5f5;
+      margin-bottom: 0;
+      vertical-align: middle;
+    }
+
+    .table thead th {
+      background-color: #101010;
+      color: #ff4081;
+      border-bottom: 2px solid #c2185b;
+      white-space: nowrap;
+    }
+
+    .table tbody td {
+      background-color: #242424;
+      color: #f5f5f5;
+      border-color: #444;
+    }
+
+    .table tbody tr:hover td {
+      background-color: #303030;
+    }
+
+    .btn-edit {
+      background-color: #00bcd4;
+      color: #181818;
+      border: none;
+      font-weight: bold;
+    }
+
+    .btn-edit:hover {
+      background-color: #80deea;
+      color: #181818;
+    }
+
+    .btn-del {
+      background-color: #c2185b;
+      color: #fff;
+      border: none;
+      font-weight: bold;
+    }
+
+    .btn-del:hover {
+      background-color: #ff4081;
+      color: #181818;
+    }
+
+    @media (max-width: 768px) {
+      .navbar-nav {
+        padding-top: 10px;
+      }
+
+      h1 {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark mb-4">
     <div class="container">
-      <span class="navbar-brand">Estúdio de Tatuagem</span>
-      <div>
-        <a href="clientes.html" class="text-light me-3 text-decoration-none">Clientes</a>
-        <a href="senioridade.html" class="text-light me-3 text-decoration-none">Senioridade</a>
-        <a href="estilos.html" class="text-light me-3 text-decoration-none">Estilos</a>
-        <a href="tatuadores.html" class="text-light me-3 text-decoration-none">Tatuadores</a>
-        <a href="agendamentos.html" class="text-light me-3 text-decoration-none fw-bold">Agendamentos</a>
-        <button onclick="sair()" class="btn btn-outline-light btn-sm">Sair</button>
+      <a href="dashboard.html" class="navbar-brand">🎸 Estúdio de Tatuagem</a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuNavbar" aria-controls="menuNavbar" aria-expanded="false" aria-label="Abrir menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="menuNavbar">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item">
+            <a href="clientes.html" class="nav-link">Clientes</a>
+          </li>
+          <li class="nav-item">
+            <a href="senioridade.html" class="nav-link">Senioridade</a>
+          </li>
+          <li class="nav-item">
+            <a href="estilos.html" class="nav-link">Estilos</a>
+          </li>
+          <li class="nav-item">
+            <a href="tatuadores.html" class="nav-link">Tatuadores</a>
+          </li>
+          <li class="nav-item">
+            <a href="agendamentos.html" class="nav-link active">Agendamentos</a>
+          </li>
+          <li class="nav-item ms-lg-2">
+            <button onclick="sair()" class="btn btn-sair btn-sm">Sair</button>
+          </li>
+        </ul>
       </div>
     </div>
   </nav>
 
-  <h1>Agendamentos</h1>
+  <main class="container pb-4">
 
-  <!-- Formulário para cadastrar novo agendamento -->
-  <form id="form-agendamento" class="row g-2 mt-2 mb-4">
-    <div class="col-md-3">
-      <select id="idcliente" class="form-select" required>
-        <option value="">Cliente...</option>
-      </select>
-    </div>
-    <div class="col-md-3">
-      <select id="idtatuador" class="form-select" required>
-        <option value="">Tatuador...</option>
-      </select>
-    </div>
-    <div class="col-md-2">
-      <input type="date" id="dataagendamento" class="form-control" required>
-    </div>
-    <div class="col-md-2">
-      <input type="time" id="horaagendamento" class="form-control" required>
-    </div>
-    <div class="col-md-2">
-      <input type="number" id="valortatuagem" class="form-control" placeholder="Valor (R$)" step="0.01" min="0">
-    </div>
-    <div class="col-md-12">
-      <textarea id="descricaotatuagem" class="form-control" placeholder="Descrição da tatuagem"></textarea>
+    <h1>⚡ Agendamentos ⚡</h1>
+
+    <form id="form-agendamento" class="formulario">
+      <div class="row g-3">
+
+        <div class="col-md-3">
+          <select id="idcliente" class="form-select" required>
+            <option value="">Cliente...</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <select id="idtatuador" class="form-select" required>
+            <option value="">Tatuador...</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+          <input type="date" id="dataagendamento" class="form-control" required>
+        </div>
+
+        <div class="col-md-2">
+          <input type="time" id="horaagendamento" class="form-control" required>
+        </div>
+
+        <div class="col-md-2">
+          <input type="number" id="valortatuagem" class="form-control" placeholder="Valor (R$)" step="0.01" min="0">
+        </div>
+
+        <div class="col-md-12">
+          <textarea id="descricaotatuagem" class="form-control" placeholder="Descrição da tatuagem" rows="3"></textarea>
+        </div>
+
+        <!-- O status aparece apenas durante a edição -->
+        <div class="col-md-3" id="bloco-status" style="display: none;">
+          <label for="status" class="form-label">Status do agendamento</label>
+          <select id="status" class="form-select">
+            <option value="pendente">Pendente</option>
+            <option value="confirmado">Confirmado</option>
+            <option value="concluido">Concluído</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label for="desenho" class="form-label">Desenho da tatuagem</label>
+          <input type="file" id="desenho" class="form-control" accept="image/*">
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end">
+          <button id="btn-submit-agendamento" type="submit" class="btn btn-cadastrar w-100">
+            Cadastrar
+          </button>
+        </div>
+
+      </div>
+    </form>
+
+    <div class="tabela-container">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Cliente</th>
+              <th>Tatuador</th>
+              <th>Data</th>
+              <th>Hora</th>
+              <th>Valor</th>
+              <th>Status</th>
+              <th>Desenho</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody id="corpo-tabela">
+            <!-- Os agendamentos serão carregados pelo JavaScript -->
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Esse bloco começa escondido — só aparece quando estamos editando um agendamento existente -->
-    <div class="col-md-3" id="bloco-status" style="display: none;">
-      <select id="status" class="form-select">
-        <option value="pendente">Pendente</option>
-        <option value="confirmado">Confirmado</option>
-        <option value="concluido">Concluído</option>
-        <option value="cancelado">Cancelado</option>
-      </select>
-    </div>
+  </main>
 
-    <!-- Campo de upload de imagem adicionado -->
-    <div class="col-md-4">
-      <input type="file" id="desenho" class="form-control" accept="image/*">
-    </div>
-
-    <div class="col-md-2">
-      <button id="btn-submit-agendamento" type="submit" class="btn btn-primary w-100">Cadastrar</button>
-    </div>
-  </form>
-
-  <!-- Tabela onde os agendamentos vão aparecer -->
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Cliente</th>
-        <th>Tatuador</th>
-        <th>Data</th>
-        <th>Hora</th>
-        <th>Valor</th>
-        <th>Status</th>
-        <th>Desenho</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody id="corpo-tabela">
-    </tbody>
-  </table>
-
-  <!-- Ordem correta de scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/agendamentos.js"></script>
 

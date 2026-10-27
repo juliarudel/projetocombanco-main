@@ -1,56 +1,243 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Senioridade — Estúdio de Tatuagem</title>
-  <link href="https://jsdelivr.net" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Senioridade — Estúdio de Tatuagem</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Estilo Rock anos 80 -->
+    <style>
+        body {
+            background-color: #181818;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Menu */
+        nav.navbar {
+            background-color: #292929 !important;
+            border-bottom: 3px solid #c2185b;
+            border-radius: 5px;
+        }
+
+        .navbar-brand {
+            color: #ff4081 !important;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #ff4081 !important;
+        }
+
+        /* Título */
+        h1 {
+            color: #ff4081;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 2px solid #c2185b;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Formulário */
+        #form-senioridade {
+            background-color: #252525;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+
+        .form-control {
+            background-color: #333;
+            color: white;
+            border: 1px solid #666;
+        }
+
+        .form-control::placeholder {
+            color: #ccc;
+        }
+
+        .form-control:focus {
+            background-color: #333;
+            color: white;
+            border-color: #ff4081;
+            box-shadow: none;
+        }
+
+        /* Botão cadastrar */
+        .btn-primary {
+            background-color: #c2185b;
+            border-color: #c2185b;
+        }
+
+        .btn-primary:hover {
+            background-color: #880e4f;
+            border-color: #880e4f;
+        }
+
+        /* Tabela */
+        .table {
+            color: white;
+            --bs-table-color: white;
+            --bs-table-bg: #252525;
+            --bs-table-striped-bg: #303030;
+            --bs-table-striped-color: white;
+            --bs-table-hover-bg: #414141;
+            --bs-table-hover-color: white;
+            --bs-table-border-color: #555;
+        }
+
+        .table thead th {
+            background-color: #c2185b;
+            color: white;
+        }
+
+        /* Botão editar */
+        .btn-warning {
+            background-color: #333;
+            color: #00bfff;
+            border-color: #00bfff;
+        }
+
+        .btn-warning:hover {
+            background-color: #00bfff;
+            color: black;
+        }
+
+        /* Botão excluir */
+        .btn-danger {
+            background-color: #c2185b;
+            border-color: #c2185b;
+        }
+
+        .btn-danger:hover {
+            background-color: #880e4f;
+            border-color: #880e4f;
+        }
+
+        /* Ajuste para telas pequenas */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px !important;
+            }
+
+            nav .container {
+                gap: 10px;
+            }
+
+            nav .container > div {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            nav a {
+                margin-right: 0 !important;
+            }
+        }
+    </style>
 </head>
+
 <body class="container py-4">
 
-  <!-- Navbar idêntica ao molde do roteiro -->
-  <nav class="navbar navbar-dark bg-dark mb-4">
-    <div class="container">
-      <span class="navbar-brand">Estúdio de Tatuagem</span>
-      <div>
-        <a href="clientes.html" class="text-light me-3 text-decoration-none">Clientes</a>
-        <a href="senioridade.html" class="text-light me-3 text-decoration-none fw-bold">Senioridade</a>
-        <a href="estilos.html" class="text-light me-3 text-decoration-none">Estilos</a>
-        <a href="tatuadores.html" class="text-light me-3 text-decoration-none">Tatuadores</a>
-        <a href="agendamentos.html" class="text-light me-3 text-decoration-none">Agendamentos</a>
-        <button onclick="sair()" class="btn btn-outline-light btn-sm">Sair</button>
-      </div>
+    <!-- Menu de navegação -->
+    <nav class="navbar navbar-dark mb-4">
+        <div class="container">
+
+            <span class="navbar-brand">
+                🎸 Estúdio de Tatuagem
+            </span>
+
+            <div>
+                <a href="clientes.html"
+                   class="text-light me-3 text-decoration-none">
+                    Clientes
+                </a>
+
+                <a href="senioridade.html"
+                   class="text-light me-3 text-decoration-none fw-bold">
+                    Senioridade
+                </a>
+
+                <a href="estilos.html"
+                   class="text-light me-3 text-decoration-none">
+                    Estilos
+                </a>
+
+                <a href="tatuadores.html"
+                   class="text-light me-3 text-decoration-none">
+                    Tatuadores
+                </a>
+
+                <a href="agendamentos.html"
+                   class="text-light me-3 text-decoration-none">
+                    Agendamentos
+                </a>
+
+                <button onclick="sair()"
+                        class="btn btn-outline-light btn-sm">
+                    Sair
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Título -->
+    <h1>⚡ Senioridade</h1>
+
+    <!-- Formulário de cadastro -->
+    <form id="form-senioridade" class="row g-2 mt-2 mb-4">
+
+        <div class="col-md-4">
+            <input type="text"
+                   id="nome"
+                   class="form-control"
+                   placeholder="Nome (ex: Júnior)"
+                   required>
+        </div>
+
+        <div class="col-md-2">
+            <button id="btn-submit-senioridade"
+                    type="submit"
+                    class="btn btn-primary w-100">
+                Cadastrar
+            </button>
+        </div>
+
+    </form>
+
+    <!-- Tabela de senioridades -->
+    <div class="table-responsive">
+
+        <table class="table table-bordered table-striped table-hover">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody id="corpo-tabela">
+                <!-- As senioridades aparecem aqui pelo JavaScript -->
+            </tbody>
+
+        </table>
+
     </div>
-  </nav>
 
-  <h1>Senioridade</h1>
-
-  <!-- Formulário para cadastrar nova senioridade -->
-  <form id="form-senioridade" class="row g-2 mt-2 mb-4">
-    <div class="col-md-4">
-      <input type="text" id="nome" class="form-control" placeholder="Nome (ex: Júnior)" required>
-    </div>
-    <div class="col-md-2">
-      <button id="btn-submit-senioridade" type="submit" class="btn btn-primary w-100">Cadastrar</button>
-    </div>
-  </form>
-
-  <!-- Tabela onde as senioridades vão aparecer -->
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody id="corpo-tabela">
-      <!-- as senioridades vão aparecer aqui -->
-    </tbody>
-  </table>
-
-  <!-- Ordem correta de scripts -->
-  <script src="js/auth.js"></script>
-  <script src="js/senioridade.js"></script>
+    <!-- Scripts do projeto -->
+    <script src="js/auth.js"></script>
+    <script src="js/senioridade.js"></script>
 
 </body>
 </html>
+```

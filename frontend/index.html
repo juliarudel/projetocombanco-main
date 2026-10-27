@@ -1,29 +1,172 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Estúdio de Tatuagem</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Estúdio de Tatuagem</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #181818;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Menu */
+        .navbar {
+            background-color: #292929 !important;
+            border-bottom: 3px solid #c2185b;
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            color: #ff4081 !important;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        /* Botão entrar */
+        .btn-light {
+            background-color: #c2185b;
+            color: white;
+            border-color: #c2185b;
+            font-weight: bold;
+        }
+
+        .btn-light:hover {
+            background-color: #880e4f;
+            color: white;
+            border-color: #880e4f;
+        }
+
+        /* Área principal */
+        .principal {
+            min-height: 85vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .conteudo {
+            max-width: 800px;
+        }
+
+        .guitarra {
+            font-size: 65px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #ff4081;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .descricao {
+            color: #cccccc;
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .linha {
+            width: 80px;
+            height: 4px;
+            background-color: #c2185b;
+            margin: 0 auto 25px;
+        }
+
+        .destaque {
+            color: #ff4081;
+            font-weight: bold;
+        }
+
+        /* Rodapé */
+        footer {
+            padding: 15px;
+            text-align: center;
+            color: #888;
+            border-top: 1px solid #333;
+        }
+
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            .descricao {
+                font-size: 16px;
+            }
+
+            .guitarra {
+                font-size: 50px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-  <nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-      <span class="navbar-brand">Estúdio de Tatuagem</span>
-      <div>
-        <a href="login.html" class="btn btn-light">Entrar</a>
-      </div>
-    </div>
-  </nav>
+    <!-- Menu -->
+    <nav class="navbar navbar-dark">
+        <div class="container">
 
-  <div class="container py-5 text-center">
-    <h1 class="display-4">Seu estúdio, organizado do seu jeito</h1>
-    <p class="lead">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
-      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-      veniam, quis nostrud exercitation ullamco laboris.
-    </p>
-  </div>
+            <span class="navbar-brand">
+                🎸 Estúdio de Tatuagem
+            </span>
+
+            <div>
+                <a href="login.html" class="btn btn-light">
+                    Entrar
+                </a>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- Conteúdo principal -->
+    <main class="principal">
+
+        <div class="conteudo">
+
+            <div class="guitarra">🎸</div>
+
+            <h1 class="display-4">
+                Seu estúdio, organizado do seu jeito
+            </h1>
+
+            <div class="linha"></div>
+
+            <p class="descricao">
+                Mais atitude, mais arte e mais organização.
+                Gerencie seus <span class="destaque">tatuadores</span>,
+                clientes e agendamentos em um só lugar.
+                Tudo no ritmo do rock!
+            </p>
+
+            <a href="login.html" class="btn btn-light btn-lg">
+                ⚡ Entrar no sistema
+            </a>
+
+        </div>
+
+    </main>
+
+    <!-- Rodapé -->
+    <footer>
+        🎸 Estúdio de Tatuagem — Atitude e arte em cada traço.
+    </footer>
 
 </body>
 </html>
+```

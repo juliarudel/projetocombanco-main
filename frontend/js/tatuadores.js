@@ -16,13 +16,22 @@ function limparFormulario() {
   document.querySelectorAll('#lista-estilos input').forEach(cb => cb.checked = false)
 }
 
+async function verificarResposta(resposta) {
+  if (!resposta.ok) {
+    const detalhe = await resposta.text()
+    throw new Error(`Erro ${resposta.status}: ${detalhe}`)
+  }
+  return resposta
+}
+
 // ─── Busca as senioridades na API e preenche o <select> ───
 // ATUALIZADO: Versão performática e segura que te mandei primeiro!
 async function carregarSenioridades() {
   try {
     // Alterado para fetchAutenticado
-    const resposta = await fetchAutenticado(`${API}/senioridade`)
-    if (!resposta.ok) throw new Error(`Erro: ${resposta.status}`)
+    const resposta = await verificarResposta(
+      await fetchAutenticado(`${API}/senioridade`)
+    )
     
     const senioridades = await resposta.json()
     const select = document.getElementById('idsenioridade')
@@ -45,7 +54,9 @@ carregarSenioridades()
 // ─── Carrega a lista de tatuadores ao abrir a página ───
 async function listarTatuadores() {
   // Alterado para fetchAutenticado
-  const resposta = await fetchAutenticado(`${API}/tatuadores`)
+  const resposta = await verificarResposta(
+    await fetchAutenticado(`${API}/tatuadores`)
+  )
   const tatuadores = await resposta.json()
 
   const corpo = document.getElementById('corpo-tabela')
@@ -87,37 +98,43 @@ formTatuador.addEventListener('submit', async (e) => {
   const idTatuador = formTatuador.dataset.idTatuador
   let idParaEstilos = idTatuador   
 
-  if (idTatuador) {
-    // Alterado para fetchAutenticado
-    await fetchAutenticado(`${API}/tatuadores/${idTatuador}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(tatuador)
-    })
-  } else {
-    // Alterado para fetchAutenticado
-    const resposta = await fetchAutenticado(`${API}/tatuadores`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(tatuador)
-    })
-    const dados = await resposta.json()
-    idParaEstilos = dados.idtatuador   
+  try {
+    if (idTatuador) {
+      const resposta = await fetchAutenticado(`${API}/tatuadores/${idTatuador}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(tatuador)
+      })
+      await verificarResposta(resposta)
+    } else {
+      const resposta = await verificarResposta(
+        await fetchAutenticado(`${API}/tatuadores`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(tatuador)
+        })
+      )
+      const dados = await resposta.json()
+      idParaEstilos = dados.idtatuador
+    }
+
+    const idsMarcados = Array.from(document.querySelectorAll('#lista-estilos input:checked'))
+      .map(checkbox => Number(checkbox.value))
+
+    await verificarResposta(
+      await fetchAutenticado(`${API}/tatuadores/${idParaEstilos}/estilos`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idestilos: idsMarcados })
+      })
+    )
+
+    limparFormulario()
+    await listarTatuadores()
+  } catch (erro) {
+    console.error('Erro ao salvar tatuador:', erro)
+    alert(`Não foi possível salvar o tatuador. ${erro.message}`)
   }
-
-  // ─── Salva os estilos marcados, numa segunda chamada ───
-  const idsMarcados = Array.from(document.querySelectorAll('#lista-estilos input:checked'))
-    .map(checkbox => Number(checkbox.value))
-
-  // Alterado para fetchAutenticado
-  await fetchAutenticado(`${API}/tatuadores/${idParaEstilos}/estilos`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ idestilos: idsMarcados })
-  })
-
-  limparFormulario()
-  listarTatuadores()
 })
 
 // ─── Abre os dados do tatuador no formulário para edição ───
@@ -134,7 +151,9 @@ async function preencherFormularioEdicao(tatuador) {
   document.querySelectorAll('#lista-estilos input').forEach(cb => cb.checked = false)
 
   // Alterado para fetchAutenticado
-  const resposta = await fetchAutenticado(`${API}/tatuadores/${tatuador.idtatuador}/estilos`)
+  const resposta = await verificarResposta(
+    await fetchAutenticado(`${API}/tatuadores/${tatuador.idtatuador}/estilos`)
+  )
   const estilosDoTatuador = await resposta.json()
   estilosDoTatuador.forEach(e => {
     const checkbox = document.getElementById(`estilo-${e.idestilo}`)
@@ -158,7 +177,9 @@ async function deletarTatuador(id) {
 // ─── Carrega todos os estilos disponíveis na página ───
 async function carregarEstilos() {
   // Alterado para fetchAutenticado
-  const resposta = await fetchAutenticado(`${API}/estilos`)
+  const resposta = await verificarResposta(
+    await fetchAutenticado(`${API}/estilos`)
+  )
   const estilos = await resposta.json()
 
   const lista = document.getElementById('lista-estilos')

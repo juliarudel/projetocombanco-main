@@ -89,7 +89,9 @@ function limparFormulario() {
 // ─── PARTE 7: LISTAR AGENDAMENTOS COM EXIBIÇÃO DE MINIATURA ATUALIZADA ───
 async function listarAgendamentos() {
   // Alterado para fetchAutenticado
-  const resposta = await fetchAutenticado(`${API}/agendamentos`);
+  const resposta = await verificarResposta(
+    await fetchAutenticado(`${API}/agendamentos`)
+  );
   const agendamentos = await resposta.json();
 
   const corpo = document.getElementById('corpo-tabela');
@@ -167,41 +169,56 @@ formAgendamento.addEventListener('submit', async (e) => {
   const idAgendamento = formAgendamento.dataset.idAgendamento;
   let idParaUpload = idAgendamento;
 
-  if (idAgendamento) {
-    // Alterado para fetchAutenticado
-    await fetchAutenticado(`${API}/agendamentos/${idAgendamento}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(agendamento)
-    });
-  } else {
-    // Alterado para fetchAutenticado
-    const resposta = await fetchAutenticado(`${API}/agendamentos`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(agendamento)
-    });
-    const dados = await resposta.json();
-    idParaUpload = dados.idagendamento;
+  try {
+    if (idAgendamento) {
+      const resposta = await fetchAutenticado(`${API}/agendamentos/${idAgendamento}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(agendamento)
+      });
+      await verificarResposta(resposta);
+    } else {
+      const resposta = await verificarResposta(
+        await fetchAutenticado(`${API}/agendamentos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(agendamento)
+        })
+      );
+      const dados = await resposta.json();
+      idParaUpload = dados.idagendamento;
+    }
+  } catch (erro) {
+    console.error('Erro ao salvar agendamento:', erro);
+    alert(`Não foi possível salvar o agendamento. ${erro.message}`);
+    return;
   }
 
-  // Bloco de Upload do arquivo de desenho
   const arquivoInput = document.getElementById('desenho');
   const arquivo = arquivoInput && arquivoInput.files ? arquivoInput.files[0] : null;
-  
-  if (arquivo && idParaUpload) {
-    const formData = new FormData();
-    formData.append('arquivo', arquivo);
 
-    // Alterado para fetchAutenticado
-    await fetchAutenticado(`${API}/agendamentos/${idParaUpload}/desenho`, {
-      method: 'POST',
-      body: formData
-    });
+  if (arquivo && idParaUpload) {
+    try {
+      const formData = new FormData();
+      formData.append('arquivo', arquivo);
+
+      await verificarResposta(
+        await fetchAutenticado(`${API}/agendamentos/${idParaUpload}/desenho`, {
+          method: 'POST',
+          body: formData
+        })
+      );
+    } catch (erro) {
+      console.error('Erro ao enviar desenho:', erro);
+      alert(`Agendamento salvo, mas não foi possível enviar o desenho. ${erro.message}`);
+      limparFormulario();
+      await listarAgendamentos();
+      return;
+    }
   }
 
   limparFormulario();
-  listarAgendamentos();
+  await listarAgendamentos();
 });
 
 // ─── FUNÇÃO DELETAR AGENDAMENTO (Adicionada e Corrigida!) ───
@@ -228,7 +245,16 @@ async function deletarAgendamento(id) {
 
 // Executa automaticamente as funções assim que a página abre
 document.addEventListener('DOMContentLoaded', () => {
-  carregarClientes();
-  carregarTatuadores();
-  listarAgendamentos();
+  carregarClientes().catch(erro => {
+    console.error('Erro ao carregar clientes:', erro);
+    alert(`Não foi possível carregar os clientes. ${erro.message}`);
+  });
+  carregarTatuadores().catch(erro => {
+    console.error('Erro ao carregar tatuadores:', erro);
+    alert(`Não foi possível carregar os tatuadores. ${erro.message}`);
+  });
+  listarAgendamentos().catch(erro => {
+    console.error('Erro ao carregar agendamentos:', erro);
+    alert(`Não foi possível carregar os agendamentos. ${erro.message}`);
+  });
 });

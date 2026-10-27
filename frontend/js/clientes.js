@@ -11,8 +11,18 @@ function limparFormulario() {
   botaoSubmit.classList.add('btn-primary')
 }
 
+async function verificarResposta(resposta) {
+  if (!resposta.ok) {
+    const detalhe = await resposta.text()
+    throw new Error(`Erro ${resposta.status}: ${detalhe}`)
+  }
+  return resposta
+}
+
 async function listarClientes() {
-  const resposta = await fetchAutenticado(`${API}/clientes`)
+  const resposta = await verificarResposta(
+    await fetchAutenticado(`${API}/clientes`)
+  )
   const clientes = await resposta.json()
 
   const corpo = document.getElementById('corpo-tabela')
@@ -49,22 +59,25 @@ formCliente.addEventListener('submit', async (e) => {
 
   const idCliente = formCliente.dataset.idCliente
 
-  if (idCliente) {
-    await fetchAutenticado(`${API}/clientes/${idCliente}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(cliente)
-    })
-  } else {
-    await fetchAutenticado(`${API}/clientes`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(cliente)
-    })
+  try {
+    const resposta = idCliente
+      ? await fetchAutenticado(`${API}/clientes/${idCliente}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cliente)
+      })
+      : await fetchAutenticado(`${API}/clientes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(cliente)
+      })
+    await verificarResposta(resposta)
+    limparFormulario()
+    await listarClientes()
+  } catch (erro) {
+    console.error('Erro ao salvar cliente:', erro)
+    alert(`Não foi possível salvar o cliente. ${erro.message}`)
   }
-
-  limparFormulario()
-  listarClientes()
 })
 
 function preencherFormularioEdicao(cliente) {
@@ -86,3 +99,8 @@ async function deletarCliente(id) {
   await fetchAutenticado(`${API}/clientes/${id}`, { method: 'DELETE' })
   listarClientes()
 }
+
+listarClientes().catch(erro => {
+  console.error('Erro ao carregar clientes:', erro)
+  alert(`Não foi possível carregar os clientes. ${erro.message}`)
+})

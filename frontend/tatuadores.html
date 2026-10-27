@@ -1,83 +1,313 @@
+```html
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Tatuadores — Estúdio de Tatuagem</title>
-  <link href="https://jsdelivr.net" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tatuadores — Estúdio de Tatuagem</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Estilo Rock anos 80 -->
+    <style>
+        body {
+            background-color: #181818;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Menu */
+        nav.navbar {
+            background-color: #292929 !important;
+            border-bottom: 3px solid #c2185b;
+            border-radius: 5px;
+        }
+
+        .navbar-brand {
+            color: #ff4081 !important;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #ff4081 !important;
+        }
+
+        /* Título */
+        h1 {
+            color: #ff4081;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 2px solid #c2185b;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+
+        /* Formulário */
+        #form-tatuador {
+            background-color: #252525;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+
+        .form-control,
+        .form-select {
+            background-color: #333;
+            color: white;
+            border: 1px solid #666;
+        }
+
+        .form-control::placeholder {
+            color: #ccc;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: #333;
+            color: white;
+            border-color: #ff4081;
+            box-shadow: none;
+        }
+
+        .form-select option {
+            background-color: #333;
+            color: white;
+        }
+
+        .form-label {
+            color: #ff4081;
+        }
+
+        /* Estilos de tatuagem */
+        #lista-estilos {
+            padding: 10px;
+        }
+
+        .form-check-input:checked {
+            background-color: #c2185b;
+            border-color: #c2185b;
+        }
+
+        /* Botão cadastrar */
+        .btn-primary {
+            background-color: #c2185b;
+            border-color: #c2185b;
+        }
+
+        .btn-primary:hover {
+            background-color: #880e4f;
+            border-color: #880e4f;
+        }
+
+        /* Tabela */
+        .table {
+            color: white;
+            --bs-table-color: white;
+            --bs-table-bg: #252525;
+            --bs-table-striped-bg: #303030;
+            --bs-table-striped-color: white;
+            --bs-table-hover-bg: #414141;
+            --bs-table-hover-color: white;
+            --bs-table-border-color: #555;
+        }
+
+        .table thead th {
+            background-color: #c2185b;
+            color: white;
+        }
+
+        /* Botão editar */
+        .btn-warning {
+            background-color: #333;
+            color: #00bfff;
+            border-color: #00bfff;
+        }
+
+        .btn-warning:hover {
+            background-color: #00bfff;
+            color: black;
+        }
+
+        /* Botão excluir */
+        .btn-danger {
+            background-color: #c2185b;
+            border-color: #c2185b;
+        }
+
+        .btn-danger:hover {
+            background-color: #880e4f;
+            border-color: #880e4f;
+        }
+
+        /* Ajuste para celular */
+        @media (max-width: 768px) {
+            .table-responsive {
+                overflow-x: auto;
+            }
+
+            .navbar .container-fluid {
+                gap: 10px;
+            }
+
+            .navbar .d-flex {
+                gap: 10px !important;
+            }
+        }
+    </style>
 </head>
-<body class="container py-4">
 
-  <!-- Navbar idêntica ao molde do roteiro -->
-  <nav class="navbar navbar-dark bg-dark mb-4">
-    <div class="container">
-      <span class="navbar-brand">Estúdio de Tatuagem</span>
-      <div>
-        <a href="clientes.html" class="text-light me-3 text-decoration-none">Clientes</a>
-        <a href="senioridade.html" class="text-light me-3 text-decoration-none">Senioridade</a>
-        <a href="estilos.html" class="text-light me-3 text-decoration-none">Estilos</a>
-        <a href="tatuadores.html" class="text-light me-3 text-decoration-none fw-bold">Tatuadores</a>
-        <a href="agendamentos.html" class="text-light me-3 text-decoration-none">Agendamentos</a>
-        <button onclick="sair()" class="btn btn-outline-light btn-sm">Sair</button>
-      </div>
-    </div>
-  </nav>
+<body class="container-fluid p-4">
 
-  <h1>Tatuadores</h1>
+    <!-- Menu de navegação -->
+    <nav class="navbar navbar-dark mb-4">
+        <div class="container-fluid">
 
-  <!-- Formulário para cadastrar novo tatuador -->
-  <form id="form-tatuador" class="row g-2 mt-2 mb-4">
-    <div class="col-md-3">
-      <input type="text" id="nometatuador" class="form-control" placeholder="Nome" required>
-    </div>
-    <div class="col-md-2">
-      <input type="text" id="cpf" class="form-control" placeholder="CPF (só números)" required>
-    </div>
-    <div class="col-md-3">
-      <input type="email" id="email" class="form-control" placeholder="E-mail">
-    </div>
-    <div class="col-md-2">
-      <input type="text" id="telefone" class="form-control" placeholder="Telefone">
-    </div>
-    <div class="col-md-2">
-      <select id="idsenioridade" class="form-select" required>
-        <option value="">Senioridade...</option>
-      </select>
+            <span class="navbar-brand">
+                🎸 Estúdio de Tatuagem
+            </span>
+
+            <div class="d-flex flex-wrap align-items-center gap-3">
+
+                <a href="clientes.html"
+                   class="text-light text-decoration-none">
+                    Clientes
+                </a>
+
+                <a href="senioridade.html"
+                   class="text-light text-decoration-none">
+                    Senioridade
+                </a>
+
+                <a href="estilos.html"
+                   class="text-light text-decoration-none">
+                    Estilos
+                </a>
+
+                <a href="tatuadores.html"
+                   class="text-light text-decoration-none fw-bold">
+                    Tatuadores
+                </a>
+
+                <a href="agendamentos.html"
+                   class="text-light text-decoration-none">
+                    Agendamentos
+                </a>
+
+                <button onclick="sair()"
+                        class="btn btn-outline-light btn-sm">
+                    Sair
+                </button>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- Título -->
+    <h1>⚡ Tatuadores</h1>
+
+    <!-- Formulário de cadastro -->
+    <form id="form-tatuador" class="row g-2 mt-2 mb-4">
+
+        <div class="col-md-3">
+            <input type="text"
+                   id="nometatuador"
+                   class="form-control"
+                   placeholder="Nome"
+                   required>
+        </div>
+
+        <div class="col-md-2">
+            <input type="text"
+                   id="cpf"
+                   class="form-control"
+                   placeholder="CPF (só números)"
+                   required>
+        </div>
+
+        <div class="col-md-3">
+            <input type="email"
+                   id="email"
+                   class="form-control"
+                   placeholder="E-mail">
+        </div>
+
+        <div class="col-md-2">
+            <input type="text"
+                   id="telefone"
+                   class="form-control"
+                   placeholder="Telefone">
+        </div>
+
+        <div class="col-md-2">
+            <select id="idsenioridade"
+                    class="form-select"
+                    required>
+                <option value="">Senioridade...</option>
+            </select>
+        </div>
+
+        <!-- Seleção dos estilos -->
+        <div class="col-md-12 my-2">
+
+            <label class="form-label fw-bold">
+                Estilos que domina
+            </label>
+
+            <div id="lista-estilos"
+                 class="d-flex flex-wrap gap-3">
+
+                <!-- Os checkboxes são preenchidos pelo JavaScript -->
+
+            </div>
+
+        </div>
+
+        <!-- Botão cadastrar -->
+        <div class="col-md-2 mt-2">
+
+            <button id="btn-submit-tatuador"
+                    type="submit"
+                    class="btn btn-primary w-100">
+                Cadastrar
+            </button>
+
+        </div>
+
+    </form>
+
+    <!-- Tabela de tatuadores -->
+    <div class="table-responsive">
+
+        <table class="table table-bordered table-striped table-hover">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>E-mail</th>
+                    <th>Telefone</th>
+                    <th>Senioridade</th>
+                    <th>Estilos</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody id="corpo-tabela">
+                <!-- Os tatuadores aparecem aqui pelo JavaScript -->
+            </tbody>
+
+        </table>
+
     </div>
 
-    <!-- Caixa de seleção múltipla para marcar os estilos -->
-    <div class="col-md-12 my-2">
-      <label class="form-label fw-bold">Estilos que domina</label>
-      <div id="lista-estilos" class="d-flex flex-wrap gap-3">
-        <!-- os checkboxes são preenchidos pelo JavaScript -->
-      </div>
-    </div>
-
-    <div class="col-md-2 mt-2">
-      <button id="btn-submit-tatuador" type="submit" class="btn btn-primary w-100">Cadastrar</button>
-    </div>
-  </form>
-
-  <!-- Tabela onde os tatuadores vão aparecer -->
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>CPF</th>
-        <th>E-mail</th>
-        <th>Telefone</th>
-        <th>Senioridade</th>
-        <th>Estilos</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody id="corpo-tabela">
-    </tbody>
-  </table>
-
-  <!-- Ordem correta de scripts -->
-  <script src="js/auth.js"></script>
-  <script src="js/tatuadores.js"></script>
+    <!-- Scripts do projeto -->
+    <script src="js/auth.js"></script>
+    <script src="js/tatuadores.js"></script>
 
 </body>
 </html>

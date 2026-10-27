@@ -2,27 +2,13 @@ const API = 'http://127.0.0.1:8000'
 protegerPagina()
 const formCadastro = document.getElementById('form-cadastro')
 
-// Função auxiliar para gerar o hash SHA-256 de forma automática e nativa
-async function gerarHashSHA256(texto) {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(texto)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
-}
-
 formCadastro.addEventListener('submit', async (e) => {
   e.preventDefault()
-
-  const senhaPura = document.getElementById('senha').value
-
-  // Gera o hash automaticamente antes de montar o objeto que vai para a API
-  const senhaCriptografada = await gerarHashSHA256(senhaPura)
 
   const usuario = {
     nome: document.getElementById('nome').value,
     email: document.getElementById('email').value,
-    senha: senhaCriptografada // <-- Agora a senha vai criptografada para o banco
+    senha: document.getElementById('senha').value
   }
 
   let resposta
