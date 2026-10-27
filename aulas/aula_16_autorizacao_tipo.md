@@ -172,6 +172,9 @@ const resposta = await fetchAutenticado(`${API}/usuarios`, {
 
 ## Erros comuns
 
+- **Erro ao criar a tabela `usuario` (`errno: 150`, chave estrangeira incorreta):** a coluna `cliente.idcliente` precisa ter uma chave primária/índice único para ser referenciada. Confira com `SHOW INDEX FROM cliente;`. Se não houver índice, execute `ALTER TABLE cliente MODIFY idcliente INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (idcliente);` e então execute o `CREATE TABLE usuario` da Parte 2 da Aula 12.
+- **Erro ao cadastrar usuário / tabela `usuario` não existe:** a tabela agora faz parte de `banco/estudio_tatuagem.sql`. Para um banco já importado, execute o `CREATE TABLE usuario` da Parte 2 da Aula 12, ou importe o SQL atualizado (isso recria as tabelas e pode apagar dados existentes).
+- **`403` ao cadastrar:** somente um usuário `admin` pode criar funcionários. Entre com a conta administradora; usuário `funcionario` recebe `403` de propósito.
 - **Hash colado errado no `INSERT`:** se você esqueceu o `.decode()` no comando da Parte 2, o texto copiado vem com `b'` no início e `'` no final — apague essas sobras antes de colar no SQL, ou rode o comando de novo com `.decode()`.
 - **`403` mesmo logada como admin:** confira se o usuário `admin@estudio.com` realmente foi criado com `tipo = 'admin'` no `INSERT` (não `'funcionario'` por engano), e se você fez login de novo depois de criar a conta (um token gerado antes do `INSERT` não teria o `tipo` certo).
 - **A tela de cadastro "trava" achando que deu certo, mas nada foi criado:** olhe a aba Network do navegador (F12) — se a resposta for `403`, é porque quem está logado não é admin. Isso é comportamento esperado, não bug.

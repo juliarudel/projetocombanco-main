@@ -3,12 +3,12 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from rotas import clientes, senioridade, tatuadores, agendamentos, estilos, usuarios
-# AJUSTADO: Importando apenas o verificar_token padrão do arquivo de segurança
 from seguranca import verificar_token, verificar_admin
 from database import conectar
 import bcrypt
 import jwt
 import os   
+import pymysql
 
 app = FastAPI(title="Estúdio de Tatuagem API")
 
@@ -34,11 +34,9 @@ class LoginDados(BaseModel):
 
 # ─── FUNÇÃO LOCAL DE VERIFICAÇÃO DE ADMIN (Blindada com Passe Livre) ───
 def verificar_admin_local(payload: dict = Depends(verificar_token)):
-    # Se o e-mail do token for o seu, libera o acesso na hora sem olhar o tipo!
     if payload.get("sub") == "ju4@gmail.com":
         return payload
         
-    # Bloqueio padrão de segurança para usuários comuns
     if payload.get("tipo") != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
@@ -46,24 +44,17 @@ def verificar_admin_local(payload: dict = Depends(verificar_token)):
         )
     return payload
 
-# ─── ROTA OFICIAL DE LOGIN ───
+# ─── ROTA OFICIAL DE LOGIN (100% DINÂMICA COMPATÍVEL COM DICIONÁRIO E TUPLA) ───
 @app.post("/login", tags=["Login"])
 def login_usuario(dados: LoginDados):
-    if (dados.email == "ju4@gmail.com" and dados.senha == "ju4") or (dados.email == "admin@estudio.com" and dados.senha == "admin123"):
-        token_dados = {
-            "sub": dados.email,
-            "tipo": "admin"
-        }
-        token_gerado = jwt.encode(token_dados, SECRET_KEY, algorithm=ALGORITHM)
-        return {
-            "mensagem": "Login de Administrador realizado com sucesso!",
-            "access_token": token_gerado,
-            "token_type": "bearer"
-        }
-
-    conn = conectar()
-    cursor = conn.cursor(dictionary=True) 
+    conn = None
+    cursor = None
+    
     try:
+        conn = conectar()
+        cursor = conn.cursor(pymysql.cursors.DictCursor) 
+        
+        # Busca dinamicamente qualquer e-mail cadastrado na tabela usuario
         cursor.execute("SELECT * FROM usuario WHERE email = %s", (dados.email,))
         usuario = cursor.fetchone()
         
@@ -71,27 +62,44 @@ def login_usuario(dados: LoginDados):
             raise HTTPException(status_code=401, detail="E-mail ou senha inválidos")
             
         senha_digitada_bytes = dados.senha.encode('utf-8')
-        senha_banco_bytes = usuario['senha'].encode('utf-8')
         
+        # ─── TRATAMENTO BLINDADO DE FORMATO DO BANCO ───
+        if isinstance(usuario, dict):
+            senha_banco = usuario['senha']
+            email_banco = usuario['email']
+            tipo_banco = usuario['tipo']
+        else:
+            # Se o banco ignorar o DictCursor e devolver Tupla, pegamos pelas posições numéricas:
+            # Posições padrão: 0:id, 1:nome, 2:email, 3:senha, 4:tipo
+            email_banco = usuario[2]
+            senha_banco = usuario[3]
+            tipo_banco = usuario[4]
+            
+        senha_banco_bytes = senha_banco.encode('utf-8')
+        
+        # O bcrypt compara a senha digitada com a hash salva no phpMyAdmin
         if bcrypt.checkpw(senha_digitada_bytes, senha_banco_bytes):
             token_dados = {
-                "sub": usuario['email'],
-                "tipo": usuario['tipo']
+                "sub": email_banco,
+                "tipo": tipo_banco  # Passa dinamicamente 'admin' ou 'funcionario'
             }
-            token_gerado = jwt.encode(token_dados, SECRET_KEY, algorithm=ALGORITHM)
+            token_generated = jwt.encode(token_dados, SECRET_KEY, algorithm=ALGORITHM)
             return {
                 "mensagem": "Login realizado com sucesso!",
-                "access_token": token_gerado,
+                "access_token": token_generated,
                 "token_type": "bearer"
             }
         else:
             raise HTTPException(status_code=401, detail="E-mail ou senha inválidos")
+            
     finally:
-        cursor.close()
-        conn.close()
+        # Garante o fechamento limpo das conexões se elas existirem
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
-# ─── Registro das rotas do sistema usando a nova dependência blindada ───
-# DEIXE ESSA LINHA LIMPA (SEM DEPENDENCIES), APENAS COM O PREFIXO:
+# ─── Registro das rotas do sistema usando as dependências da Aula 16 ───
 app.include_router(usuarios.router, prefix="/usuarios", tags=["Usuários"], dependencies=[Depends(verificar_admin)])
 
 app.include_router(clientes.router, prefix="/clientes", tags=["Clientes"], dependencies=[Depends(verificar_token)])

@@ -78,6 +78,26 @@ INSERT INTO `cliente` (`idcliente`, `nome`, `cpf`, `telefone`, `datacadastro`, `
 -- --------------------------------------------------------
 
 --
+-- Estrutura para tabela `usuario`
+--
+
+DROP TABLE IF EXISTS `usuario`;
+CREATE TABLE `usuario` (
+  `idusuario` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `senha` varchar(255) NOT NULL,
+  `tipo` enum('admin','funcionario','cliente') NOT NULL DEFAULT 'funcionario',
+  `idcliente` int(11) DEFAULT NULL,
+  PRIMARY KEY (`idusuario`),
+  UNIQUE KEY `email` (`email`),
+  KEY `idcliente` (`idcliente`),
+  CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`idcliente`) REFERENCES `cliente` (`idcliente`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura para tabela `estilo`
 --
 
