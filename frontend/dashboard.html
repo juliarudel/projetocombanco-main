@@ -128,8 +128,10 @@
     <h1>⚡ Painel Principal ⚡</h1>
     <p class="subtitulo">Gerencie seu estúdio de tatuagem</p>
 
-    <div class="row g-3">
+    <!-- justify-content-center garante o alinhamento perfeito quando houver quebra de linha -->
+    <div class="row g-3 justify-content-center">
 
+      <!-- Botões Principais -->
       <div class="col-md-4">
         <div class="card-menu">
           <a href="clientes.html" class="btn btn-principal w-100">Clientes</a>
@@ -144,4 +146,34 @@
 
       <div class="col-md-4">
         <div class="card-menu">
-          <a href="agendamentos.html" class="btn btn-principal w-100">Agendamentos
+          <a href="agendamentos.html" class="btn btn-principal w-100">Agendamentos</a>
+        </div>
+      </div>
+
+      <!-- Botões de Apoio alterados de cinza para rosa (btn-principal) -->
+      <div class="col-md-4">
+        <div class="card-menu">
+          <a href="senioridade.html" class="btn btn-principal w-100">Senioridade</a>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card-menu">
+          <a href="estilos.html" class="btn btn-principal w-100">Estilos</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2026 Estúdio de Tatuagem API — Aula 15</p>
+  </footer>
+
+  <script src="js/auth.js"></script>
+  <script>
+    protegerPagina() // Mantém a trava de segurança na página
+  </script>
+
+</body>
+</html>
