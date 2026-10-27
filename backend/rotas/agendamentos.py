@@ -56,16 +56,31 @@ def listar_agendamentos():
 def criar_agendamento(agendamento: Agendamento):
     conn = conectar()
     cursor = conn.cursor()
-    cursor.execute(
-        """INSERT INTO agendamento (idcliente, idtatuador, dataagendamento, horaagendamento, descricaotatuagem, valortatuagem)
-           VALUES (%s, %s, %s, %s, %s, %s)""",
-        (agendamento.idcliente, agendamento.idtatuador, agendamento.dataagendamento,
-         agendamento.horaagendamento, agendamento.descricaotatuagem, agendamento.valortatuagem)
-    )
-    novo_id = cursor.lastrowid   # o ID que o MySQL gerou sozinho pro novo agendamento (AUTO_INCREMENT)
-    conn.commit()
-    conn.close()
-    return {"mensagem": "Agendamento cadastrado com sucesso", "idagendamento": novo_id}
+    try:
+        cursor.execute(
+            """INSERT INTO agendamento
+                (idcliente, idtatuador, dataagendamento, horaagendamento,
+                 descricaotatuagem, valortatuagem, status)
+               VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+            (
+                agendamento.idcliente,
+                agendamento.idtatuador,
+                agendamento.dataagendamento,
+                agendamento.horaagendamento,
+                agendamento.descricaotatuagem,
+                agendamento.valortatuagem,
+                agendamento.status or "pendente"
+            )
+        )
+        novo_id = cursor.lastrowid
+        conn.commit()
+        return {"mensagem": "Agendamento cadastrado com sucesso", "idagendamento": novo_id}
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        cursor.close()
+        conn.close()
 
 
 # GET /agendamentos/{id} - busca um agendamento pelo ID
@@ -122,7 +137,8 @@ def atualizar_agendamento(id: int, agendamento: Agendamento):
                 dataagendamento = %s,
                 horaagendamento = %s,
                 descricaotatuagem = %s,
-                valortatuagem = %s
+                valortatuagem = %s,
+                status = %s
             WHERE idagendamento = %s
             """,
             (
@@ -132,6 +148,7 @@ def atualizar_agendamento(id: int, agendamento: Agendamento):
                 agendamento.horaagendamento,
                 agendamento.descricaotatuagem,
                 agendamento.valortatuagem,
+                agendamento.status or "pendente",
                 id
             )
         )

@@ -8,7 +8,6 @@ from database import conectar
 import bcrypt
 import jwt
 import os   
-import pymysql
 
 app = FastAPI(title="Estúdio de Tatuagem API")
 
@@ -32,19 +31,7 @@ class LoginDados(BaseModel):
     email: str
     senha: str
 
-# ─── FUNÇÃO LOCAL DE VERIFICAÇÃO DE ADMIN (Blindada com Passe Livre) ───
-def verificar_admin_local(payload: dict = Depends(verificar_token)):
-    if payload.get("sub") == "ju4@gmail.com":
-        return payload
-        
-    if payload.get("tipo") != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, 
-            detail="Acesso restrito a administradores"
-        )
-    return payload
-
-# ─── ROTA OFICIAL DE LOGIN (100% DINÂMICA COMPATÍVEL COM DICIONÁRIO E TUPLA) ───
+# ─── ROTA OFICIAL DE LOGIN (TOTALMENTE PÚBLICA E DINÂMICA) ───
 @app.post("/login", tags=["Login"])
 def login_usuario(dados: LoginDados):
     conn = None
@@ -52,9 +39,9 @@ def login_usuario(dados: LoginDados):
     
     try:
         conn = conectar()
-        cursor = conn.cursor(pymysql.cursors.DictCursor) 
+        cursor = conn.cursor()
         
-        # Busca dinamicamente qualquer e-mail cadastrado na tabela usuario
+        # Busca o usuário na tabela pelo e-mail informado
         cursor.execute("SELECT * FROM usuario WHERE email = %s", (dados.email,))
         usuario = cursor.fetchone()
         
@@ -63,17 +50,17 @@ def login_usuario(dados: LoginDados):
             
         senha_digitada_bytes = dados.senha.encode('utf-8')
         
-        # ─── TRATAMENTO BLINDADO DE FORMATO DO BANCO ───
-        if isinstance(usuario, dict):
-            senha_banco = usuario['senha']
-            email_banco = usuario['email']
-            tipo_banco = usuario['tipo']
-        else:
-            # Se o banco ignorar o DictCursor e devolver Tupla, pegamos pelas posições numéricas:
-            # Posições padrão: 0:id, 1:nome, 2:email, 3:senha, 4:tipo
-            email_banco = usuario[2]
-            senha_banco = usuario[3]
-            tipo_banco = usuario[4]
+        # ─── MAPEAMENTO CORRIGIDO DA TUPLA DO BANCO ───
+        # desc[0] captura estritamente o texto com o nome da coluna (ex: 'senha')
+        colunas = [desc[0] for desc in cursor.description]
+        usuario_dict = dict(zip(colunas, usuario))
+        
+        senha_banco = usuario_dict.get('senha')
+        email_banco = usuario_dict.get('email')
+        tipo_banco = usuario_dict.get('tipo')
+        
+        if not senha_banco:
+            raise HTTPException(status_code=401, detail="Estrutura de senha inválida no banco")
             
         senha_banco_bytes = senha_banco.encode('utf-8')
         
@@ -81,7 +68,7 @@ def login_usuario(dados: LoginDados):
         if bcrypt.checkpw(senha_digitada_bytes, senha_banco_bytes):
             token_dados = {
                 "sub": email_banco,
-                "tipo": tipo_banco  # Passa dinamicamente 'admin' ou 'funcionario'
+                "tipo": tipo_banco  # Retorna dinamicamente 'admin' ou 'funcionario'
             }
             token_generated = jwt.encode(token_dados, SECRET_KEY, algorithm=ALGORITHM)
             return {
@@ -93,7 +80,6 @@ def login_usuario(dados: LoginDados):
             raise HTTPException(status_code=401, detail="E-mail ou senha inválidos")
             
     finally:
-        # Garante o fechamento limpo das conexões se elas existirem
         if cursor:
             cursor.close()
         if conn:
